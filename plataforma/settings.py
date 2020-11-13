@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'core',
+    'accounts',
     'courses',
 ]
 
@@ -142,3 +143,8 @@ DEFAULT_FROM_EMAIL = 'Nome <email@gmail.com>'
 #EMAIL_PORT = 587
 
 CONTACT_EMAIL = 'contato@eadsite.com'
+
+LOGIN_URL = 'accounts:login'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_URL = 'accounts:logout'
+AUTH_USER_MODEL = 'accounts.User'

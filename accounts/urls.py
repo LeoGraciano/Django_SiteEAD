@@ -18,17 +18,30 @@ from django.urls import path
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
+from . import views as accounts_views
 
+app_name = 'accounts'
 
 urlpatterns = [
-    path('', include('core.urls', namespace='core')),
-    path('conta/', include('accounts.urls', namespace='accounts')),
-    path('cursos/', include('courses.urls', namespace='courses')),
-    path('admin/', admin.site.urls),
+    path('',
+         accounts_views.dashboard, name='dashboard'
+         ),
+    path('entrar/',
+         auth_views.LoginView.as_view(template_name='login.html'),
+         name='login'
+         ),
+    path('sair/',
+         auth_views.LogoutView.as_view(next_page='core:home'),
+         name='logout'
+         ),
+    path('cadastre-se/',
+         accounts_views.register, name='register'
+         ),
+    path('editar/',
+         accounts_views.edit, name='edit'
+         ),
+    path('editar_password/',
+         accounts_views.edit_password, name='edit_password'
+         ),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL,
-                          document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
