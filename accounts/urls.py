@@ -41,7 +41,10 @@ urlpatterns = [
     path('editar/',
          accounts_views.edit, name='edit'
          ),
-    path('editar_password/',
+    path('editar-password/',
          accounts_views.edit_password, name='edit_password'
+         ),
+    path('nova-senha/',
+         accounts_views.password_reset, name='password_reset'
          ),
 ]

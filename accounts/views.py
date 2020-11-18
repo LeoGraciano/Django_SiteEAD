@@ -1,9 +1,11 @@
 from django.conf import settings
 from django.shortcuts import redirect, render
-from django.contrib.auth.forms import PasswordChangeForm
-from .forms import RegistrationForm, EditAccountForm
-from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm
+from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.decorators import login_required
+from .forms import RegistrationForm, EditAccountForm, PasswordResetForm
+from .models import PasswordReset
+from core.utils import generate_hash_key
 # Create your views here.
 
 
@@ -67,3 +69,21 @@ def edit_password(request):
         form = PasswordChangeForm(user=request.user)
         context['form'] = form
     return render(request, template_name, context)
+
+
+def password_reset(request):
+    template_name = 'password_reset.html'
+    form = PasswordResetForm(request.POST or None)
+    context = {}
+    if form.is_valid():
+        form.save()
+        context['success'] = True
+    context['form'] = form
+    return render(request, template_name, context)
+
+
+'''def password_reset_confirm(request):
+    template_name = 'password_reset_confirm.html'
+    form = SetPasswordForm()
+    context = {}
+    return render(request, template_name, context)'''

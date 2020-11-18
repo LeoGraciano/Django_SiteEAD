@@ -1,10 +1,15 @@
+from accounts.models import PasswordReset
 from django import forms
 from django.contrib.auth import get_user_model
+from core.utils import generate_hash_key
+from core.mail import send_mail_template
+
 
 User = get_user_model()
 
 
 class RegistrationForm(forms.ModelForm):
+
     email = forms.EmailField(label="Email")
     password1 = forms.CharField(label="Senha", widget=forms.PasswordInput)
     password2 = forms.CharField(
@@ -25,6 +30,7 @@ class RegistrationForm(forms.ModelForm):
         return user
 
     class Meta:
+        User = get_user_model()
         model = User
         fields = ['username', 'email', 'name', ]
 
@@ -38,3 +44,28 @@ class EditAccountForm(forms.ModelForm):
             'email',
             'name',
         ]
+
+
+class PasswordResetForm(forms.Form):
+    email = forms.EmailField(label="E-mail")
+    User = get_user_model()
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email).exists():
+            return email
+        raise forms.ValidationError(
+            'Nenhum cadastro encontrado neste e-mail.   '
+        )
+
+    def save(self):
+        user = User.objects.get(email=self.cleaned_data['email'])
+        key = generate_hash_key(user.username)
+        reset = PasswordReset(key=key, user=user)
+        reset.save()
+        template_name = 'password_reset_mail.html'
+        subject = 'Criar nova senha:'
+        context = {
+            'reset': reset
+        }
+        send_mail_template(subject, template_name, context, [user.email])
