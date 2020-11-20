@@ -1,6 +1,6 @@
 import hashlib
-import string
 import random
+import string
 
 
 def random_key(size=5):

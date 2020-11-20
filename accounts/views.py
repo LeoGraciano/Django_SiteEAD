@@ -1,18 +1,20 @@
 from django.conf import settings
-from django.shortcuts import redirect, render
-from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm
-from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.decorators import login_required
-from .forms import RegistrationForm, EditAccountForm, PasswordResetForm
-from .models import PasswordReset
-from core.utils import generate_hash_key
+from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
+from accounts.forms import EditAccountForm, PasswordResetForm, RegistrationForm
+from accounts.models import PasswordReset
+from courses.models import Enrollment
+
 # Create your views here.
 
 
 @login_required
 def dashboard(request):
     template_name = 'dashboard.html'
-    return render(request, template_name)
+    context = {}
+    return render(request, template_name, context)
 
 
 def register(request):
@@ -21,14 +23,6 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-            # PARA AUTO LOGIN APOS CADASTRA
-            #user = form.save()
-            # user = authenticate(username=form.cleaned_data['username'],
-            #                    password=form.cleaned_data['password1']
-            #                    )
-            #login(request, user)
-            # return redirect('core:home')
-            # FIM AUTO LOGIN APOS CADASTRA
             return redirect(settings.LOGIN_URL)
     else:
         form = RegistrationForm()
@@ -47,8 +41,10 @@ def edit(request):
         form = EditAccountForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            form = EditAccountForm(instance=request.user)
-            context['success'] = True
+            messages.success(
+                request, 'Os dados da sua conta foi alterado com sucesso')
+        return redirect('accounts:dashboard')
+
     else:
         form = EditAccountForm(instance=request.user)
     context['form'] = form
@@ -82,8 +78,13 @@ def password_reset(request):
     return render(request, template_name, context)
 
 
-'''def password_reset_confirm(request):
+def password_reset_confirm(request, key):
     template_name = 'password_reset_confirm.html'
-    form = SetPasswordForm()
+    reset = get_object_or_404(PasswordReset, key=key)
+    form = SetPasswordForm(user=reset.user, data=request.POST or None)
     context = {}
-    return render(request, template_name, context)'''
+    if form.is_valid():
+        form.save()
+        context['success'] = True
+    context['form'] = form
+    return render(request, template_name, context)

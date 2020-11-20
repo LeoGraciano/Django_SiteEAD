@@ -1,5 +1,5 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
 
 # Create your models here.
 
@@ -69,11 +69,11 @@ class Enrollment(models.Model):
     )
     # LINK CAMPO COM CURSO JÁ EXISTENTES
     course = models.ForeignKey(
-        Course, on_delete=models.CASCADE,
+        "Course", on_delete=models.CASCADE,
         verbose_name='Curso', related_name='enrollments'
     )
     status = models.IntegerField(
-        'Situação', choices=STATUS_CHOICES, default=0, blank=True
+        'Situação', choices=STATUS_CHOICES, default=1, blank=True
     )
     created_at = models.DateTimeField('Criado em', auto_now_add=True)
     uploaded_at = models.DateTimeField('Atualizado em', auto_now=True)
@@ -83,6 +83,9 @@ class Enrollment(models.Model):
         self.status = 1
         self.save()
 
+    def is_approved(self):
+        return self.status == 1
+
     class Meta:
         verbose_name = 'Inscrição'
         verbose_name_plural = 'Inscrições'
@@ -90,3 +93,44 @@ class Enrollment(models.Model):
         unique_together = (
             ('user', 'course'),
         )
+
+
+class Announcement(models.Model):
+    course = models.ForeignKey(
+        "Course", verbose_name='Curso', related_name='announcements',
+        on_delete=models.CASCADE,
+    )
+    title = models.CharField('Título', max_length=100)
+    content = models.TextField('Conteúdo')
+
+    created_at = models.DateTimeField('Criado em Entrada', auto_now_add=True)
+    uploaded_at = models.DateTimeField('Atualizando em', auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'Anuncio'
+        verbose_name_plural = 'Anuncios'
+        ordering = ['-created_at']
+
+
+class Comment(models.Model):
+    announcement = models.ForeignKey(
+        "Announcement",
+        verbose_name='Anuncio', related_name='comments',
+        on_delete=models.CASCADE,
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name='Usuário',
+        on_delete=models.CASCADE,
+    )
+    comment = models.TextField('Comentários')
+
+    created_at = models.DateTimeField('Criado em', auto_now_add=True)
+    uploaded_at = models.DateTimeField('Atualizando em', auto_now=True)
+
+    class Meta:
+        verbose_name = 'Comentário'
+        verbose_name_plural = 'Comentários'
+        ordering = ['created_at']

@@ -1,9 +1,9 @@
-from accounts.models import PasswordReset
 from django import forms
 from django.contrib.auth import get_user_model
-from core.utils import generate_hash_key
-from core.mail import send_mail_template
 
+from accounts.models import PasswordReset
+from core.mail import send_mail_template
+from core.utils import generate_hash_key
 
 User = get_user_model()
 

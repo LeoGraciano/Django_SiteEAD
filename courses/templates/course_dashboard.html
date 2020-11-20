@@ -1,0 +1,36 @@
+{% extends 'dashboard.html' %}
+
+{% block menu_options %}
+
+<li>
+    <a href="#">
+        {{ course }}
+    </a>
+</li>
+<li>
+    <a href="#">
+        <i class="fa fa-video-camera"></i>
+        Aulas e Materiais
+    </a>
+</li>
+<li>
+    <a href="#">
+        <i class="fa fa-info-circle"></i>
+        Informações
+    </a>
+</li>
+<li>
+    <a href="#">
+        <i class="fa fa-envelope"></i>
+        Anúncios
+    </a>
+</li>
+<li>
+    <a href="#">
+        <i class="fa fa-comments"></i>
+        Fórum de Dúvidas
+    </a>
+</li>
+{{ block.super }}
+
+{% endblock menu_options %}

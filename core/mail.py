@@ -1,10 +1,10 @@
 # faz a renderização de um template em uma string
-from django.template.loader import render_to_string
-# filtro do django que vai remover as tags da HTML.
-from django.template.defaultfilters import striptags
+from django.conf import settings
 # UMA classe do django que cria e-mail alternativos
 from django.core.mail import EmailMultiAlternatives
-from django.conf import settings
+# filtro do django que vai remover as tags da HTML.
+from django.template.defaultfilters import striptags
+from django.template.loader import render_to_string
 
 
 def send_mail_template(

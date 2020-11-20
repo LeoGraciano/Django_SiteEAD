@@ -11,6 +11,7 @@ autopep8 = "*"
 [packages]
 django = "*"
 pillow = "*"
+freeze = "*"
 
 [requires]
 python_version = "3.8"
