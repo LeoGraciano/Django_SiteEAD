@@ -1,3 +1,4 @@
+from courses.models import Comment
 from django import forms
 from django.conf import settings
 
@@ -22,3 +23,10 @@ class ContactCourse(forms.Form):
             subject, template_name, context, [
                 settings.CONTACT_EMAIL]
         )
+
+
+class CommentForm(forms.ModelForm):
+
+    class Meta:
+        model = Comment
+        fields = ['comment']

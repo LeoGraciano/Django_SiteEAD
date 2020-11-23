@@ -7,5 +7,6 @@
     "cSpell.words": [
         "anuncios",
         "inscricao"
-    ]
+    ],
+    "python.pythonPath": "/home/leograciano/.cache/pypoetry/virtualenvs/django-siteead-DVDnMrj6-py3.8/bin/python3.8"
 }
