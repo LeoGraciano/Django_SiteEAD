@@ -56,6 +56,56 @@ class Course(models.Model):
         ordering = ['-created_at']
 
 
+class Lesson(models.Model):
+
+    name = models.CharField('Nome', max_length=100)
+    description = models.TextField('Descrição', blank=True)
+    number = models.IntegerField('Numero (ordem)', blank=True)
+    release_date = models.DateField('Data de Liberação', blank=True, null=True)
+    created_at = models.DateTimeField('Criado em', auto_now_add=True)
+    uploaded_at = models.DateTimeField('Atualizando em', auto_now=True)
+
+    course = models.ForeignKey(
+        'Course', verbose_name='Curso',
+        related_name='lessons',
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'aula'
+        verbose_name_plural = 'Aulas'
+        ordering = ['number']
+
+
+class Material(models.Model):
+    name = models.CharField('Nome', max_length=100)
+    embedded = models.TextField('Vídeo embedded', blank=True)
+    file = models.FileField(
+        upload_to='lessons/materials',
+        blank=True,
+        null=True
+    )
+    lesson = models.ForeignKey(
+        'Lesson',
+        verbose_name='Aula',
+        related_name='materials',
+        on_delete=models.CASCADE,
+    )
+
+    def is_embedded(self):
+        return bool(self.embedded)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'material'
+        verbose_name_plural = 'materiais'
+
+
 class Enrollment(models.Model):
     # STATUS PENDENTE DOS USUÁRIOS DENTRO DE OUTROS STATUS QUE PODERAM SER ADD
     STATUS_CHOICES = (
