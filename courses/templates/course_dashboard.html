@@ -1,5 +1,11 @@
 {% extends 'dashboard.html' %}
 
+{% block breadcrumb %}
+    {{ block.super }}
+    <li>/</li>
+    <li><a href="{% url 'courses:announcements' course.slug %}">{{ course }}</a></li>
+{% endblock breadcrumb %}
+
 {% block menu_options %}
 
 <li>
