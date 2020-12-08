@@ -13,6 +13,7 @@ django = "*"
 pillow = "*"
 freeze = "*"
 pipfile = "*"
+django-taggit = "*"
 
 [requires]
 python_version = "3.8"

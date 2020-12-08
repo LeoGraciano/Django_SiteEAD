@@ -87,7 +87,7 @@ class Lesson(models.Model):
         return False
 
     class Meta:
-        verbose_name = 'aula'
+        verbose_name = 'Aula'
         verbose_name_plural = 'Aulas'
         ordering = ['number']
 

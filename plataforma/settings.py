@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'core',
     'accounts',
     'courses',
+    'forum',
+    # APP Terceiros
+    'taggit',
 ]
 
 MIDDLEWARE = [

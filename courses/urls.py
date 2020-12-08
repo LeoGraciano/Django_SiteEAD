@@ -17,7 +17,4 @@ urlpatterns = [
     path('aulas/<str:slug>/<int:pk>', views.lesson, name='lesson'),
     path('materiais/<str:slug>/<int:pk>', views.material, name='material'),
 
-
-
-
 ]
