@@ -20,6 +20,7 @@
                 <ul>
                     <li class="pure-menu-selected"><a href="{% url 'core:home' %}">Início</a></li>
                     <li><a href="{% url 'courses:index' %}">Cursos</a></li>
+                    <li><a href="{% url 'forum:index' %}">Forum</a></li>
                     <li><a href="{% url 'core:contact' %}">Contato</a></li>
 
                     {% if user.is_authenticated %}
@@ -31,26 +32,30 @@
                 </ul>
             </div>
         </div>
-    <div class="pure-g-r content-ribbon">
-        {% if messages %}
-        <aside class="pure-u-1">
-            {% for message in messages %}
-            <p>{{message}}</p>
-            {% endfor %}
-        </aside>
-        {% endif %}
-    </div>
+        <div class="pure-g-r content-ribbon">
+            {% if messages %}
+            <aside class="pure-u-1">
+                {% for message in messages %}
+                <p>{{message}}</p>
+                {% endfor %}
+            </aside>
+            {% endif %}
+        </div>
 
         {% block content %}
 
         {% endblock content %}
-
 
         <div class="footer">
             SITE EAD - Uma simples plataforma de ensino a distância
         </div>
     </div>
     <script src="http://yui.yahooapis.com/3.12.0/build/yui/yui-min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    {% block scripts %}
+    {% endblock scripts %}
+
 </body>
 
 </html>

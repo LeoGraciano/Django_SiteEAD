@@ -7,7 +7,7 @@ from django.conf import settings
 class Thread(models.Model):
 
     title = models.CharField('Título', max_length=100)
-    slug = models.SlugField('identificador', max_length=100, unique=True)
+    slug = models.SlugField('Identificador', max_length=100, unique=True)
     body = models.TextField('Mensagem')
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name='Autor', related_name='threads',
@@ -57,3 +57,24 @@ class Reply(models.Model):
         verbose_name = 'Resposta'
         verbose_name_plural = 'Respostas'
         ordering = ['-correct', 'created']
+
+
+def post_save_reply(created, instance, **kwargs):
+    instance.thread.answers = instance.thread.replies.count()
+    instance.thread.save()
+    if instance.correct:
+        instance.thread.replies.exclude(pk=instance.pk).update(correct=False)
+
+
+def post_delete_reply(instance, **kwargs):
+    instance.thread.answers = instance.thread.replies.count()
+    instance.thread.save()
+
+
+models.signals.post_save.connect(
+    post_save_reply, sender=Reply, dispatch_uid='post_save_reply'
+)
+
+models.signals.post_delete.connect(
+    post_delete_reply, sender=Reply, dispatch_uid='post_delete_reply'
+)

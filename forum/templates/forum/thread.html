@@ -57,11 +57,106 @@
             <p>
                 <i class="fa fa-tags"></i>
                 {% for tag in object.tags.all %}
-                <a href="{% url 'forum:index_tagged' tag.slug %}" title="">{{ tag }}</a>{% if not forloop.last %},{% endif %}
+                <a href="{% url 'forum:index_tagged' tag.slug %}"
+                    title="">{{ tag }}</a>{% if not forloop.last %},{% endif %}
                 {% endfor %}
-                <a class="fright" href="{{ thread.get_absolute_slug }}" title="">Criado a {{ object.created|timesince }} atrás</a>
+                <a class="fright" href="{{ thread.get_absolute_slug }}" title="">Criado a {{ object.created|timesince }}
+                    atrás</a>
             </p>
+            <div class="well" id="div-comments">
+                <h4 id='comments'>Respostas
+                    <a href="#add_comment" class="fright">Responder</a>
+                </h4>
+                {% for reply in object.replies.all  %}
+                <hr />
+                <p>
+                    <strong>{{reply.author}}</strong> disse à {{reply.created|timesince}} atrás:
+                    {{reply.reply|linebreaksbr}}
+
+                    <br />
+                    {% if object.author == user %}
+                    <a href="{% url 'forum:reply_incorrect' reply.pk %}"
+                        class="pure-button button-error reply-cancel-correct-lnk {% if not reply.correct %} hidden {% endif %}">
+                        Cancelar Reposta Correta</a>
+
+                    <a href="{% url 'forum:reply_correct' reply.pk %}"
+                        class="pure-button button-success reply-correct-lnk {% if reply.correct %} hidden {% endif %}">
+                        Resposta Correta</a>
+
+                    <span
+                        class="fright label-success reply-correct-msg {%if not reply.correct %} hidden {% endif %}">resposta
+                        indicada pelo
+                        autor</span>
+                    <br class="reply-correct-msg {%if not reply.correct %} hidden {% endif %}">
+
+                    {% elif reply.correct %}
+                    <span class=" fright label-success">resposta indicada pelo autor</span>
+                    <br />
+                    {% endif %}
+
+                </p>
+                {% endfor %}
+                <hr />
+
+                <form method='post' class='pure-form pure-form-stacked' id="add_comment">
+                    <fieldset>
+                        {% csrf_token %}
+
+                        {% for field in form %}
+                        <div class='pure-control-group'>
+                            {{field.label_tag}}
+                            {{field}}
+                            {{field.errors}}
+                        </div>
+                        {% endfor %}
+                        <div class="pure-control">
+                            <button type='submit' class="pure-button pure-button-primary">
+                                Enviar
+                            </button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 {% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $(".reply-cancel-correct-lnk").on(" click", function (e) {
+        e.preventDefault();
+        var $this = $(this);
+        var $p = $this.closest("p");
+        $.get($this.attr("href"), function (data) {
+            if (data.success) {
+                $p.find(".reply-correct-msg").addClass('hidden');
+                $this.addClass('hidden');
+                $p.find(".reply-correct-lnk").removeClass('hidden');
+            } else {
+                alert(data.message);
+            }
+        }, "json");
+        return false;
+    });
+    $(".reply-correct-lnk").on(" click", function (e) {
+        e.preventDefault();
+        var $this = $(this);
+        var $p = $this.closest("p");
+        $.get($this.attr("href"), function (data) {
+            if (data.success) {
+                $("#div-comments .reply-correct-msg").addClass('hidden')
+                $("#div-comments .reply-cancel-correct-lnk").addClass('hidden');
+                $("#div-comments .reply-correct-lnk").removeClass('hidden');
+
+                $p.find(".reply-correct-msg").removeClass('hidden');
+                $this.addClass('hidden');
+                $p.find(".reply-cancel-correct-lnk").removeClass('hidden');
+            } else {
+                alert(data.message);
+            }
+        }, "json");
+        return false;
+    });
+</script>
+{% endblock scripts %}
